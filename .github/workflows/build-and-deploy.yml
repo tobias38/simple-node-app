@@ -43,7 +43,7 @@ jobs:
 
       - name: Test
         run: |
-          docker run -d --rm ${{ env.TEST_TAG }}
+          docker run -d --rm -p 3000:3000 ${{ env.TEST_TAG }}
           sleep 5s
           curl http://localhost:3000
 
