@@ -9,9 +9,8 @@ on:
   workflow_dispatch: # allows manual triggering of the workflow
 
 env:
-  TEST_TAG: ghcr.io/tobias38/simple-node-app:test
-  LATEST_TAG: ghcr.io/tobias38/simple-node-app:latest
-
+  BUILD_VERSION: 1.0.${{ github.run_number }}
+  DOCKER_TAG_BASE: ghcr.io/tobias38/simple-node-app
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,11 +38,11 @@ jobs:
           context: .
           push: false
           load: true
-          tags: ${{ env.TEST_TAG }}
+          tags: ${{ env.DOCKER_TAG_BASE }}:latest
 
       - name: Test
         run: |
-          docker run -d --rm -p 3000:3000 ${{ env.TEST_TAG }}
+          docker run -d --rm -p 3000:3000 ${{ env.DOCKER_TAG_BASE }}:latest
           curl --retry 10 -f --retry-all-errors --retry-delay 5 http://localhost:3000
 
       - name: Push to registry
@@ -51,11 +50,11 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ env.LATEST_TAG }}
+          tags: ${{ env.DOCKER_TAG_BASE }}:latest ${{ env.DOCKER_TAG_BASE }}:${{ env.BUILD_VERSION }}
 
       - name: Create Tag
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git tag -a "v${{ github.run_number }}" -m "Release v${{ github.run_number }}"
-          git push origin "v${{ github.run_number }}"
+          git tag -a "v${{ env.BUILD_VERSION }}" -m "Release v${{ env.BUILD_VERSION }}"
+          git push origin "v${{ env.BUILD_VERSION }}"
