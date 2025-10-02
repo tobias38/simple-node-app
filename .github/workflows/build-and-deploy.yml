@@ -50,7 +50,9 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ env.DOCKER_TAG_BASE }}:latest ${{ env.DOCKER_TAG_BASE }}:${{ env.BUILD_VERSION }}
+          tags: |
+            ${{ env.DOCKER_TAG_BASE }}:latest 
+            ${{ env.DOCKER_TAG_BASE }}:${{ env.BUILD_VERSION }}
 
       - name: Create Tag
         run: |
