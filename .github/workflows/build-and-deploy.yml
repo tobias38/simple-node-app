@@ -43,7 +43,8 @@ jobs:
 
       - name: Test
         run: |
-          docker run --rm ${{ env.TEST_TAG }}
+          docker run -d --rm ${{ env.TEST_TAG }}
+          sleep 5s
           curl http://localhost:3000
 
       - name: Push to registry
